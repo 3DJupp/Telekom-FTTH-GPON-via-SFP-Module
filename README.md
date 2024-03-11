@@ -6,9 +6,11 @@ First, you need to get a compatible modem that supports both GPON and the SFP+ f
 
 ## Contract Data
 
-The next step is to get some data related to your contract, since "FTTH 1.7" the Installation Password (PLOAM) is not needed anymore. If you still need it, ask for the PLOAM/Installationskennung in German.
+### PLOAM
+The next step is to get some data related to your contract, since "Newer than FTTH 1.7=FTTH GGS" the Installation Password (PLOAM) is not needed anymore. If you still need it, ask for the PLOAM/Installationskennung in German.
+If you're not sure if you're GGS or still on 1.7, check the remarks in the [Telekom Forum](https://telekomhilft.telekom.de/t5/Festnetz-Internet/Woran-kann-man-einen-FTTH-1-7-von-einem-FTTH-Gigabit/ta-p/5429973)
 
-## PPPoE Connection
+### PPPoE Connection
 
 You also need some details for the dial-in/PPPoE connection which you should be able to retrieve from the customer portal.
 
@@ -54,7 +56,28 @@ Thats permanent / reboot-safe:
 ```bash
 sn set serialnumber
 ```
-serialnumber could be anything, e.g. the old Sercomm-Serialnumber.<br>It's useful in case you want to have multiple valid SFPs and/or ONTs for testing.
+serialnumber could be anything,<br>
+like
+- **SCOM00012345** -> Sercomm
+- **ZYWNA1234567** -> Zyxel
+
+It's useful in case you want to have multiple valid SFPs and/or ONTs for testing. More information on the Vendor prefix at.: [hack-gpon.org](https://hack-gpon.org/vendor)
+##### Troubleshooting
+If the serialnumber was already accepted, you can check the status via "onu ploamsg":
+```bash
+admin@SFP:~# onu ploamsg
+errorcode=0 curr_state=5
+```
+- O1 Initial: the OLT sends a message to the ONU to start the ONU, and the ONU enters the standby state;
+- O2 Standby: After receiving the message, the ONU extracts the delimiter value, power level, and pre-allocated compensation delay from the message, and adjusts its configurations accordingly, to support subsequent information exchanges.
+- O3 Serial number: The OLT sends a serial number (SN) request to the ONU. The ONU sends its SN to the OLT. After receiving the ONU’s SN, the OLT allocates a temporary ONU-ID to the ONU.
+- O4 Ranging: The OLT sends a ranging request to the ONU. After receiving the ranging request from the OLT, the ONU responds with a message carrying its SN and ONU-ID. The OLT calculates the compensation delay and sends it to the ONU in a message. After receiving the message, the ONU sets the compensation delay accordingly.
+- O5 Operation: The OLT sends a password request to the ONU. The ONU returns a password to the OLT.
+- O6 Intermittent LODS state.
+- O7 Emergency Stop state.
+
+Source: [hack-gpon.org](https://hack-gpon.org/gpon-auth)
+
 ##### Link speed to 2.5Gbit / HGSMII (PMG3000-D20B)
 > [!WARNING]  
 > Please check if your modem does support HSGMII (Proprietary link speeds for SFP+ Modules). Ubiquiti does not for most of their products.<br>
