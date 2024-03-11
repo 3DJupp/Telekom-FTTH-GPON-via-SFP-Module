@@ -47,6 +47,15 @@ Enter the desired PLOAM and hit “save”.<br>
 The URL for Zyxel PMG3000-D20B is: [http://10.10.1.1](http://10.10.1.1)<br>Username: admin<br>Password: admin
 #### SSH Config
 In case you want to change things, that might be done via SSH.
+I found some of those steps in [xvzf's repo](https://github.com/xvzf/zyxel-gpon-sfp) or other GPON related forums.
+Requirement is an IP of the WAN or SFP-Interface within 10.10.1.1/24. But not the IP Itself. :)
+SSH into the module (admin/admin)
+```bash
+admin@10.10.1.1
+# in case you got ssh errors:
+ssh -v -o HostKeyAlgorithms=+ssh-rsa admin@10.10.1.1
+# Login via CLI: admin/1234
+```
 ##### Change serial
 The first option is not permanent/will be reverted:
 ```bash
