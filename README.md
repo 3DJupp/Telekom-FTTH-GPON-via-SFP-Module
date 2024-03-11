@@ -6,10 +6,7 @@ First, you need to get a compatible modem that supports both GPON and the SFP+ f
 
 ## Contract Data
 
-The next step is to get some data related to your contract, such as the Installation Password (PLOAM). This is just a 10-digit/letter combination they should give you. (The technician should be able to retrieve it) - If you got an appointment with a technician, ask him or her for the PLOAM/Installationskennung in German.
-
-![image](https://github.com/3DJupp/Telekom-FTTH-GPON-via-SFP-Module/assets/8407566/9db23155-5920-42de-9680-2bd091213414)
-
+The next step is to get some data related to your contract, since "FTTH 1.7" the Installation Password (PLOAM) is not needed anymore. If you still need it, ask for the PLOAM/Installationskennung in German.
 
 ## PPPoE Connection
 
@@ -29,20 +26,43 @@ Password: PPPPPPPP (you'll have to enter yours)
 ```
 
 ## SFP Modem Configuration
-Set an IP for the Config the SFP Modem. Service IP is **192.168.100.1**
+Set an IP within the subnet for the configuration of the SFP+ Module or ONT.<br>Service IP for the Sercomm Modems is **192.168.100.1/24**<br>If you use Zyxel / PMG3000-D20B it is **10.10.1.1/24**
 
-If using and UDM-Pro, just do the following:
+If using an UDM-Pro, just do the following:
 ```bash
-# UDM Pro Interface Config (WAN2/SFP with UF Instant)
-ifconfig eth9:2 192.168.100.123 netmask 255.255.255.0 up
+# UDM Pro Interface Config (WAN2/SFP with PMG3000-D20B)
+ifconfig eth9:2 10.10.1.2 netmask 255.255.255.0 up
 # verify
-ping 192.168.100.1
-ping 192.168.100.123
+ping 10.10.1.1
+ping 10.10.1.2
 ```
 Now you should be able to connect to the service page to enter the Installation Password.
-The URL is: [http://192.168.100.1/service.html](http://192.168.100.1/service.html)
+### Sercomm
+The URL for Sercomm is: [http://192.168.100.1/service.html](http://192.168.100.1/service.html)
 ![sercomm_service_page](https://github.com/3DJupp/Telekom-FTTH-GPON-via-SFP-Module/assets/8407566/722d9a5b-c4ba-4993-ad68-dda723e22953)
-Enter the desired PLOAM and hit “save”.
+Enter the desired PLOAM and hit “save”.<br>
+### Zyxel
+The URL for Zyxel PMG3000-D20B is: [http://10.10.1.1](http://10.10.1.1)<br>Username: admin<br>Password: admin
+#### SSH Config
+In case you want to change things, that might be done via SSH.
+##### Change serial
+The first option is not permanent/will be reverted:
+```bash
+sn serialnumber
+```
+Thats permanent / reboot-safe:
+```bash
+sn set serialnumber
+```
+serialnumber could be anything, e.g. the old Sercomm-Serialnumber.<br>It's useful in case you want to have multiple valid SFPs and/or ONTs for testing.
+##### Link speed to 2.5Gbit / HGSMII (PMG3000-D20B)
+> [!WARNING]  
+> Please check if your modem does support HSGMII (Proprietary link speeds for SFP+ Modules). Ubiquiti does not for most of their products.<br>
+Mirkotik does, so i execute those commands and change the link-Speed to 2500-Base-X in RouterOS/Mikrotik config.
+```bash
+ZYXEL# hal
+Hal# set speed 2.5g mode full
+```
 
 Now you might remove the temporary interface on your UDM/Windows Network settings etc.
 ```bash
@@ -65,7 +85,7 @@ So if you are using an UDM-SE/UDM-Pro your config should look like:
 
 ## Reprovision
 **We are not yet done here.** The modem has to be "reprovisioned" which can be done via Hotline, technician, or shall happen periodically.
-They system needs to know the new MAC of your Modem etc. If that's done, your setup should look like this (or similiar):
+They system needs to know the new Serial or MAC of your Modem etc. If that's done, your setup should look like this (or similiar):
 
 <p float="left">
   <img src="https://github.com/3DJupp/Telekom-FTTH-GPON-via-SFP-Module/assets/8407566/766431e6-cbc9-410e-bafa-49ca23a93d88" width="100" />
