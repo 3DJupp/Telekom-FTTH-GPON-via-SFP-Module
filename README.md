@@ -1,19 +1,20 @@
 # TFTTH-GPON-via-SFP-Module
 ## Modem Selection
-First, you need to get a compatible modem that supports both GPON and the SFP format (SFP+ is also fine). My advice is to buy the fiber modem intended for business customers -> Digitalisierungsbox Glasfasermodem. At the time of writing this summary, it costs 40€ net (VAT not included, so roughly 60€ including shipping).
-
-[Digitalisierungsbox Glasfasermodem](https://geschaeftskunden.telekom.de/internet-dsl/produkt/digitalisierungsbox-glasfasermodem-kaufen)
+First, you need to get a compatible modem that supports both GPON and the SFP format (SFP+ is also fine). My advice is to buy the fiber modem intended for business customers -> [Digitalisierungsbox Glasfasermodem](https://geschaeftskunden.telekom.de/internet-dsl/produkt/digitalisierungsbox-glasfasermodem-kaufen). At the time of writing this summary, it costs 40€ net (VAT and shipping not included, so roughly 60€ including shipping+taxes).
 
 ## Contract Data
-
 ### PLOAM/SLID/Installationskennung
-**That is not needed on newer >=2024 contracts. Please head to activation**<br>
-You can find more details in the [Reprovision section](#reprovision).
+> [!TIP]
+> That is not needed on newer >=2024 contracts. You can directly ask the telekom-hotline for reprovision [Reprovision section](#reprovision).
+
 The next step is to get some data related to your contract, since "Newer than FTTH 1.7=FTTH GGS" the Installation Password (PLOAM) is not needed anymore.<br>If you still need it, ask for the PLOAM/Installationskennung in German.
 If you're not sure if you're GGS or still on 1.7, check the remarks in the [Telekom Forum](https://telekomhilft.telekom.de/t5/Festnetz-Internet/Woran-kann-man-einen-FTTH-1-7-von-einem-FTTH-Gigabit/ta-p/5429973)
 
 ### PPPoE Connection
-**That is not needed, when "easy login" is activated**<br>
+> [!TIP]
+> That is not needed, when [easy login](https://www.telekom.de/hilfe/internet-telefonie/internet/einrichtung-einstellungen/easy-login) is activated
+
+
 You might also need some details for the dial-in/PPPoE connection which you should be able to retrieve from the customer portal.
 
 Dummy data:
@@ -29,9 +30,15 @@ password: PPPPPPPP -> you'll have to enter yours
 ```
 
 ## SFP Modem Configuration
+> [!CAUTION]
+> Only needed when you want to modifiy:
+> - [PLOAM/SLID/Installationskennung](#ploamslidinstallationskennung)
+> - [link speed](#link-speed-to-25gbit--hgsmii-pmg3000-d20b)
+> - [serial number](#change-serial)
+
 Set an IP within the subnet for the configuration of the SFP+ Module or ONT.<br>Service IP for the Sercomm Modems is **192.168.100.1/24**<br>If you use Zyxel / PMG3000-D20B it is **10.10.1.1/24**
 
-If using an UDM-Pro, just do the following:
+If using an UDM-Pro it can be done via SSH or GUI, for SSH just do the following:
 ```bash
 # UDM Pro Interface Config (WAN2/SFP with PMG3000-D20B)
 ifconfig eth9:2 10.10.1.2 netmask 255.255.255.0 up
@@ -110,7 +117,7 @@ Or restart the UDM :)
 
 ## Adding the Interface
 Now its time to add the Interface in the UDM-Pro (Web console.)
-Just add the PPPoE Details gathered above. For Telekom customers the user should look like:
+Just add the PPPoE Details gathered above or set to DHCP if you are using easy-login.<br>For Telekom customers the user should look like:
 ```
 Username: AAAAAAAAAAATTTTTTTTTTMMMM@t-online.de
 Password: P4ssw0rd (should be 8 Digits)
@@ -123,9 +130,11 @@ So if you are using an UDM-SE/UDM-Pro your config should look like:
 
 ## Reprovision
 **We are not yet done here.** The modem has to be "reprovisioned" which can be done via Hotline, technician, or shall happen periodically.<br>
-You can either call the **[Telekom-Gigabit-Hotline +49 800 2266100](tel:+498002266100)** and ask for the PLOAM/SLID/Installationskennung and/or ask for reprovision of the Line.<br>
-You can also try the **[generic Telekom-Hotline +49 800 3301000](tel:+498003301000)** - Select "Störung"/"Troubleshooting"<br>
-They system needs to know the new Serial or MAC of your Modem etc. If that's done, your setup should look like this (or similiar):
+> [!TIP]
+> :telephone_receiver: You can either call the :telephone_receiver:
+> - [Gigabit Hotline +49 800 2266100](tel:+498002266100) - ask for the PLOAM/SLID/Installationskennung and/or ask for reprovision of the Line.
+> - [Generic Hotline +49 800 3301000](tel:+498003301000) - select "Störung"/"Troubleshooting"<br>
+The system needs to know the new Serial or MAC of your Modem etc. If that's done, your setup should look like this (or similiar):
 
 <p float="left">
   <img src="https://github.com/3DJupp/Telekom-FTTH-GPON-via-SFP-Module/assets/8407566/766431e6-cbc9-410e-bafa-49ca23a93d88" width="100" />
